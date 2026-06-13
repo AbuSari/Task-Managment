@@ -1,0 +1,54 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="brand">
+      <div class="logo">✓</div>
+      <h1>نظام إدارة المهام</h1>
+      <p>{{ mode() === 'login' ? 'سجّل الدخول للمتابعة' : 'إنشاء حساب جديد' }}</p>
+    </div>
+
+    <form (ngSubmit)="submit()">
+      @if (mode() === 'register') {
+        <label class="field">
+          <span>الاسم الكامل</span>
+          <input class="form-control" name="fullName" [(ngModel)]="fullName" required />
+        </label>
+      }
+
+      <label class="field">
+        <span>البريد الإلكتروني</span>
+        <input class="form-control" type="email" name="email" [(ngModel)]="email" required />
+      </label>
+
+      <label class="field">
+        <span>كلمة المرور</span>
+        <input class="form-control" type="password" name="password" [(ngModel)]="password" required />
+      </label>
+
+      @if (error()) {
+        <div class="error">{{ error() }}</div>
+      }
+
+      <button class="btn btn-primary submit" type="submit" [disabled]="loading()">
+        {{ loading() ? 'جارٍ المعالجة...' : (mode() === 'login' ? 'دخول' : 'إنشاء الحساب') }}
+      </button>
+    </form>
+
+    <div class="switch">
+      @if (mode() === 'login') {
+        <span>ليس لديك حساب؟</span>
+        <button class="btn btn-ghost btn-sm" (click)="toggleMode()">إنشاء حساب</button>
+      } @else {
+        <span>لديك حساب بالفعل؟</span>
+        <button class="btn btn-ghost btn-sm" (click)="toggleMode()">تسجيل الدخول</button>
+      }
+    </div>
+
+    @if (mode() === 'login') {
+      <div class="hint">
+        <strong>حسابات تجريبية:</strong>
+        <div>مدير: manager&#64;task.com / Manager&#64;123</div>
+        <div>موظف: employee&#64;task.com / Employee&#64;123</div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,106 @@
+.page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+
+  h2 { font-size: 22px; }
+  .subtitle { margin: 4px 0 0; color: var(--gray-500); font-size: 14px; }
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .search { width: 180px; }
+  .file-btn { cursor: pointer; margin: 0; }
+}
+
+.alert {
+  padding: 11px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 600;
+
+  &.alert-success { background: #dcfce7; color: var(--success); }
+  &.alert-error { background: var(--danger-light); color: var(--danger); }
+}
+
+.grid-wrapper {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  box-shadow: var(--shadow);
+}
+
+.state {
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--gray-500);
+  font-size: 15px;
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead th {
+    position: sticky;
+    top: 0;
+    background: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 700;
+    text-align: right;
+    padding: 10px 8px;
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+
+    &:hover { background: var(--gray-50); }
+    &.row-new { background: #fefce8; }
+  }
+
+  td {
+    padding: 3px 4px;
+    vertical-align: middle;
+  }
+
+  .col-title { min-width: 180px; }
+  .col-desc { min-width: 160px; }
+  .col-notes { min-width: 140px; }
+  .col-progress { width: 90px; }
+  .col-hours { width: 90px; }
+  .col-actions { width: 48px; }
+}
+
+.cell {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 7px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  background: transparent;
+  color: var(--gray-900);
+
+  &:hover { border-color: var(--gray-200); }
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  &.num { text-align: center; }
+}
+
+.actions { text-align: center; }

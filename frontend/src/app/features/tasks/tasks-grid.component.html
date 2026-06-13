@@ -1,0 +1,116 @@
+<div class="page-head">
+  <div>
+    <h2>المهام</h2>
+    <p class="subtitle">
+      {{ isManager() ? 'إدارة ومتابعة مهام جميع الموظفين' : 'إدارة ومتابعة مهامك' }}
+    </p>
+  </div>
+
+  <div class="toolbar">
+    <input class="form-control search" placeholder="بحث..."
+           [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    <button class="btn btn-secondary" (click)="addRow()">＋ صف جديد</button>
+    <button class="btn btn-secondary" (click)="downloadTemplate()">قالب Excel</button>
+    <label class="btn btn-secondary file-btn">
+      استيراد Excel
+      <input type="file" accept=".xlsx,.xls" (change)="importExcel($event)" hidden />
+    </label>
+    <button class="btn btn-secondary" (click)="exportExcel()">تصدير Excel</button>
+    <button class="btn btn-primary" (click)="save()" [disabled]="saving() || !hasChanges()">
+      {{ saving() ? 'جارٍ الحفظ...' : 'حفظ التغييرات' }}
+    </button>
+  </div>
+</div>
+
+@if (message(); as msg) {
+  <div class="alert" [class.alert-success]="msg.type === 'success'" [class.alert-error]="msg.type === 'error'">
+    {{ msg.text }}
+  </div>
+}
+
+<div class="grid-wrapper">
+  @if (loading()) {
+    <div class="state">جارٍ التحميل...</div>
+  } @else if (filteredRows().length === 0) {
+    <div class="state">لا توجد مهام. اضغط "صف جديد" أو استورد ملف Excel.</div>
+  } @else {
+    <table class="grid">
+      <thead>
+        <tr>
+          <th class="col-title">العنوان *</th>
+          <th class="col-desc">الوصف</th>
+          <th>الحالة</th>
+          <th>الأولوية</th>
+          <th class="col-progress">الإنجاز %</th>
+          <th>تاريخ البدء</th>
+          <th>الاستحقاق</th>
+          <th class="col-hours">س. مقدّرة</th>
+          <th class="col-hours">س. فعلية</th>
+          @if (isManager()) { <th>المسؤول</th> }
+          <th class="col-notes">ملاحظات</th>
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of filteredRows(); track trackByClientId($index, row)) {
+          <tr [class.row-new]="!row.id">
+            <td>
+              <input class="cell" [(ngModel)]="row.title" (ngModelChange)="markDirty(row)" placeholder="عنوان المهمة" />
+            </td>
+            <td>
+              <input class="cell" [(ngModel)]="row.description" (ngModelChange)="markDirty(row)" />
+            </td>
+            <td>
+              <select class="cell" [(ngModel)]="row.status" (ngModelChange)="markDirty(row)">
+                @for (s of statusOptions; track s) {
+                  <option [ngValue]="s">{{ statusLabels[s] }}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <select class="cell" [(ngModel)]="row.priority" (ngModelChange)="markDirty(row)">
+                @for (p of priorityOptions; track p) {
+                  <option [ngValue]="p">{{ priorityLabels[p] }}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <input class="cell num" type="number" min="0" max="100"
+                     [(ngModel)]="row.progressPercent" (ngModelChange)="markDirty(row)" />
+            </td>
+            <td>
+              <input class="cell" type="date" [(ngModel)]="row.startDate" (ngModelChange)="markDirty(row)" />
+            </td>
+            <td>
+              <input class="cell" type="date" [(ngModel)]="row.dueDate" (ngModelChange)="markDirty(row)" />
+            </td>
+            <td>
+              <input class="cell num" type="number" min="0" step="0.5"
+                     [(ngModel)]="row.estimatedHours" (ngModelChange)="markDirty(row)" />
+            </td>
+            <td>
+              <input class="cell num" type="number" min="0" step="0.5"
+                     [(ngModel)]="row.actualHours" (ngModelChange)="markDirty(row)" />
+            </td>
+            @if (isManager()) {
+              <td>
+                <select class="cell" [(ngModel)]="row.assignedToUserId" (ngModelChange)="markDirty(row)">
+                  <option [ngValue]="null">— غير مُسند —</option>
+                  @for (u of users(); track u.id) {
+                    <option [ngValue]="u.id">{{ u.fullName }}</option>
+                  }
+                </select>
+              </td>
+            }
+            <td>
+              <input class="cell" [(ngModel)]="row.notes" (ngModelChange)="markDirty(row)" />
+            </td>
+            <td class="actions">
+              <button class="btn btn-danger btn-sm" (click)="removeRow(row)" title="حذف">🗑</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

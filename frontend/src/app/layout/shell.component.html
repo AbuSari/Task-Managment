@@ -1,0 +1,20 @@
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">✓</span>
+    <span class="title">نظام إدارة المهام</span>
+  </div>
+
+  <div class="user-area">
+    @if (user(); as u) {
+      <div class="user-info">
+        <span class="name">{{ u.fullName }}</span>
+        <span class="badge role">{{ roleLabels[u.role] }}</span>
+      </div>
+    }
+    <button class="btn btn-ghost btn-sm" (click)="logout()">تسجيل الخروج</button>
+  </div>
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>
