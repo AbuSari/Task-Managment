@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TaskManagement.Api.Models;
 
 namespace TaskManagement.Api.Data;
@@ -6,8 +7,31 @@ namespace TaskManagement.Api.Data;
 /// <summary>تهيئة قاعدة البيانات ببيانات مبدئية (مدير + موظف + مهام أمثلة)</summary>
 public static class DbSeeder
 {
-    public static async Task SeedAsync(AppDbContext db)
+    /// <summary>محاولة الاتصال بقاعدة البيانات عدة مرات قبل الاستسلام.</summary>
+    private static async Task WaitForDatabaseAsync(AppDbContext db, ILogger? logger)
     {
+        const int maxAttempts = 12;
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                if (await db.Database.CanConnectAsync())
+                    return;
+            }
+            catch (Exception ex)
+            {
+                logger?.LogWarning("في انتظار قاعدة البيانات (محاولة {Attempt}/{Max}): {Message}",
+                    attempt, maxAttempts, ex.Message);
+            }
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+    }
+
+    public static async Task SeedAsync(AppDbContext db, ILogger? logger = null)
+    {
+        // الانتظار حتى تصبح قاعدة البيانات جاهزة (مهم عند التشغيل عبر Docker)
+        await WaitForDatabaseAsync(db, logger);
+
         await db.Database.MigrateAsync();
 
         if (await db.Users.AnyAsync())

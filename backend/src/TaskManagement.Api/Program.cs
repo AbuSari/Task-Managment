@@ -10,7 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ---- قاعدة البيانات (SQL Server) ----
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    opt.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null)));
 
 // ---- إعدادات JWT ----
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
@@ -78,7 +83,8 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await DbSeeder.SeedAsync(db);
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbSeeder");
+    await DbSeeder.SeedAsync(db, logger);
 }
 
 app.Run();

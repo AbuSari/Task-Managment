@@ -25,6 +25,8 @@
 
 ## التشغيل
 
+> 🚀 **للنشر على الإنترنت والوصول من أي جهاز (ايباد/جوال) عبر رابط**، راجع **[DEPLOY.md](DEPLOY.md)** — تشغيل كامل بأمر واحد عبر Docker.
+
 ### المتطلبات
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - SQL Server (أو SQL Server LocalDB / Express)
